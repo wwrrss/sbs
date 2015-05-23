@@ -1,4 +1,4 @@
-package com.veradiego31.sbs;
+package io.sirio.sbs.fragments;
 
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.app.Fragment;
+
+import io.sirio.sbs.R;
 
 
 public class MainActivity extends ActionBarActivity {
