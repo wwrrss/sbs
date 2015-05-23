@@ -9,7 +9,7 @@
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.veradiego31.sbs.MainActivity">
+        tools:context="com.sirio.sbs.MainActivity">
 
         <include
             android:id="@+id/app_bar"
@@ -30,7 +30,7 @@
         android:layout_height="match_parent"
         android:layout_gravity= "start"
         app:layout="@layout/fragment_navigation_drawer"
-        android:name="com.veradiego31.sbs.NavigationDrawerFragment"
+        android:name="io.sirio.sbs.fragments.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
