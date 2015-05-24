@@ -12,4 +12,5 @@
 
     <string name="open_drawer">Abrir</string>
     <string name="close_drawer">Cerrar</string>
+    <string name="title_activity_cursos">CursosActivity</string>
 </resources>

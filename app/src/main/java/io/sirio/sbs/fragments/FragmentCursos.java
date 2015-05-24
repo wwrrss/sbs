@@ -2,7 +2,7 @@ package io.sirio.sbs.fragments;
 
 
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +38,7 @@ public class FragmentCursos extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayList<Cursos> cursos = new ArrayList<Cursos>();
+        ArrayList<Cursos> cursos = new ArrayList<>();
 
         Cursos curso = new Cursos();
         curso.setNombreCurso("Android");

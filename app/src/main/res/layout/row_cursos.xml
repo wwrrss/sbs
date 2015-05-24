@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
-    android:layout_margin="10dp"
+    android:layout_margin="5dp"
     android:id="@+id/card_view_cursos"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -18,10 +18,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageView_curso"
-            android:src="@drawable/ic_face_white"/>
+            android:src="@drawable/ic_face_white"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="center_vertical"/>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:duplicateParentState="true">
 
@@ -48,17 +51,19 @@
                 android:id="@+id/ciudad"
                 android:layout_below="@+id/fecha_inicio"/>
 
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Large Text"
                 android:id="@+id/valor"
-                android:layout_alignParentTop="true"
-                android:layout_below="@+id/ciudad"/>
-
+                android:layout_below="@+id/ciudad"
+                android:gravity="right"
+                android:textColor="@color/accent"/>
 
         </RelativeLayout>
+
 
 
     </LinearLayout>

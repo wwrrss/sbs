@@ -2,15 +2,19 @@ package io.sirio.sbs.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.FeatureGroupInfo;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.sirio.sbs.CursosActivity;
 import io.sirio.sbs.R;
 import io.sirio.sbs.adapters.NavDrawerRecycler;
 import io.sirio.sbs.models.Information;
@@ -26,7 +31,7 @@ import io.sirio.sbs.models.Information;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment implements NavDrawerRecycler.ClickListener{
 
     public  static  final String PREF_FILE_NAME = "testpref";
 
@@ -63,6 +68,7 @@ public class NavigationDrawerFragment extends Fragment {
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
         adapter = new NavDrawerRecycler(getActivity(), getData());
+        adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return layout;
@@ -144,5 +150,13 @@ public class NavigationDrawerFragment extends Fragment {
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(preferenceName, preferenceValue);
+    }
+
+
+    @Override
+    public void itemClicked(View view, int position) {
+
+
+       startActivity(new Intent(getActivity(),CursosActivity.class));
     }
 }

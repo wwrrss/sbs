@@ -47,9 +47,7 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.action_next) {
-            startActivity(new Intent(this, SubActivity.class));
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
