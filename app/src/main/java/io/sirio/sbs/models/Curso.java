@@ -3,7 +3,7 @@ package io.sirio.sbs.models;
 /**
  * Created by Diego on 23/05/2015.
  */
-public class Cursos {
+public class Curso {
 
     private String nombreCurso;
     private String fechaInicio;
