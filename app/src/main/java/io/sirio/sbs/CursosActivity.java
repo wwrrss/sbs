@@ -8,7 +8,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,22 +15,24 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.sirio.sbs.adapters.CursosAdapter;
-import io.sirio.sbs.models.Cursos;
+import io.sirio.sbs.models.Curso;
 
 
 public class CursosActivity extends ActionBarActivity {
 
-    private ArrayList<Cursos> dataset;
+    private ArrayList<Curso> dataset;
     RecyclerView recyclerView;
     int id;
 
@@ -65,7 +66,10 @@ public class CursosActivity extends ActionBarActivity {
             public void onResponse(JSONArray response) {
                // Log.e("miREspuesta", response.toString());
                 dataset = new ArrayList<>();
-                parser(response);
+                //parser(response);En vez de hacer el parse utilizar GSON que ya te hace eso automaticamente
+                Gson gson = new Gson();
+                Type listType = new TypeToken<ArrayList<Curso>>(){}.getType();
+                dataset = gson.fromJson(response.toString(),listType);
                 progressDialog.cancel();
                 recyclerView.setAdapter(new CursosAdapter(dataset, id));
 
@@ -107,23 +111,6 @@ public class CursosActivity extends ActionBarActivity {
     }
 
 
-    public void parser (JSONArray response){
 
-
-        for (int i=0; i < response.length(); i++){
-            Cursos curso = new Cursos();
-            try {
-                JSONObject jsonObject = (JSONObject) response.get(i);
-                curso.setNombreCurso(jsonObject.getString("nombre"));
-                curso.setCiudad(jsonObject.getString("diasLaborados"));
-                curso.setFechaInicio(jsonObject.getString("salarioDiario"));
-                curso.setValor(jsonObject.getString("sueldo"));
-
-                dataset.add(curso);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 }

@@ -4,25 +4,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 import io.sirio.sbs.R;
-import io.sirio.sbs.models.Cursos;
+import io.sirio.sbs.models.Curso;
 
 /**
  * Created by Diego on 23/05/2015.
  */
 public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder>{
 
-    ArrayList<Cursos> cursos;
+    ArrayList<Curso> cursos;
     int itemLayout;
 
-    public CursosAdapter(ArrayList<Cursos> cursos, int itemLayout){
+    public CursosAdapter(ArrayList<Curso> cursos, int itemLayout){
         this.cursos = cursos;
         this.itemLayout = itemLayout;
 
@@ -35,9 +32,9 @@ public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(CursosAdapter.ViewHolder holder, int position) {
-        Cursos curso = cursos.get(position);
+        Curso curso = cursos.get(position);
 
-        holder.nombreCurso.setText(curso.getNombreCurso());
+        holder.nombreCurso.setText(curso.getNombre());
         holder.fechaInicio.setText(curso.getFechaInicio());
         holder.ciudad.setText(curso.getCiudad());
         holder.valor.setText(curso.getValor());

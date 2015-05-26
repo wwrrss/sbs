@@ -78,7 +78,7 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
         List<Information> data = new ArrayList<>();
 
         int[] icons = {R.mipmap.ic_account_balance_grey, R.mipmap.ic_explore_grey,  R.mipmap.ic_redeem_grey, R.mipmap.ic_account_circle_grey,};
-        String[] titles = {"Mis Cursos", "Cursos",  "Beneficios", "Perfil",};
+        String[] titles = {"Mis Curso", "Curso",  "Beneficios", "Perfil",};
         for (int i = 0; i < titles.length; i++){
             Information currentaData = new Information();
 

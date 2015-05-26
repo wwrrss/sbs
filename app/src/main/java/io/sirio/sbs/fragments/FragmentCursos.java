@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import io.sirio.sbs.R;
 import io.sirio.sbs.adapters.CursosAdapter;
-import io.sirio.sbs.models.Cursos;
+import io.sirio.sbs.models.Curso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,16 +38,16 @@ public class FragmentCursos extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayList<Cursos> cursos = new ArrayList<>();
+        ArrayList<Curso> cursos = new ArrayList<>();
 
-        Cursos curso = new Cursos();
+        Curso curso = new Curso();
         curso.setNombreCurso("Android");
         curso.setFechaInicio("25/04/2015");
         curso.setCiudad("Quito");
         curso.setValor("25000");
         cursos.add(curso);
 
-        Cursos curso2 = new Cursos();
+        Curso curso2 = new Curso();
         curso2.setNombreCurso("Android");
         curso2.setFechaInicio("25/04/2015");
         curso2.setCiudad("Quito");

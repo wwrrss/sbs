@@ -8,6 +8,15 @@ public class Curso {
     private String nombreCurso;
     private String fechaInicio;
     private String ciudad;
+    private String nombre;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     public String getNombreCurso() {
         return nombreCurso;
