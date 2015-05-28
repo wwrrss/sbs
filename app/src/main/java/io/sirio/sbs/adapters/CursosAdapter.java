@@ -1,9 +1,11 @@
 package io.sirio.sbs.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -11,13 +13,11 @@ import java.util.ArrayList;
 import io.sirio.sbs.R;
 import io.sirio.sbs.models.Curso;
 
-/**
- * Created by Diego on 23/05/2015.
- */
 public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder>{
 
     ArrayList<Curso> cursos;
     int itemLayout;
+    OnItemClickListener mItemClickListener;
 
     public CursosAdapter(ArrayList<Curso> cursos, int itemLayout){
         this.cursos = cursos;
@@ -64,7 +64,32 @@ public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder
             ciudad = (TextView) itemView.findViewById(R.id.ciudad);
             valor = (TextView) itemView.findViewById(R.id.valor);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    if (mItemClickListener != null) {
+                        mItemClickListener.onItemClick(v, getPosition());
+
+                    }
+
+                }
+            });
+
 
         }
+
+
     }
+
+
+    public interface OnItemClickListener {
+         void onItemClick(View view , int position);
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
 }

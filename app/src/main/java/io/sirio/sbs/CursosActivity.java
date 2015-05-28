@@ -1,15 +1,24 @@
 package io.sirio.sbs;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,6 +36,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.sirio.sbs.adapters.CursosAdapter;
+import io.sirio.sbs.fragments.CursosViewFragment;
 import io.sirio.sbs.models.Curso;
 
 
@@ -34,6 +44,7 @@ public class CursosActivity extends ActionBarActivity {
 
     private ArrayList<Curso> dataset;
     RecyclerView recyclerView;
+    CursosAdapter cursosAdapter;
     int id;
 
     @Override
@@ -46,6 +57,7 @@ public class CursosActivity extends ActionBarActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         String URL= "https://script.googleusercontent.com/macros/echo?user_content_key=iIGW6tDpoMMsAsRLO82xJG8WIVhY4VtM5gJgiA3QO6zStQOhGr8N4EbfKEDH59r0gTfTtum2cUrxmSuOwabPti5EzVkbj1G7m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnA21ty4-NFgqoKc_ZhjFAX1ah6w8hoKrwU71K7lgPAwVmCE74_lR62bbtcQNKfQPMhdIug5zkO6q&lib=MuVcg4D5zOmfGpbFbxsUiP8v3COA06hUq";
@@ -71,7 +83,35 @@ public class CursosActivity extends ActionBarActivity {
                 Type listType = new TypeToken<ArrayList<Curso>>(){}.getType();
                 dataset = gson.fromJson(response.toString(),listType);
                 progressDialog.cancel();
-                recyclerView.setAdapter(new CursosAdapter(dataset, id));
+                cursosAdapter = new CursosAdapter(dataset, id);
+                recyclerView.setAdapter(cursosAdapter);
+
+                cursosAdapter.SetOnItemClickListener(new CursosAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        Fragment curso_view = new CursosViewFragment();
+
+                        if (curso_view != null) {
+
+
+
+
+                            FragmentManager fragmentManager =
+                                    getSupportFragmentManager();
+
+                            fragmentManager.beginTransaction()
+                                    .add(R.id.container, curso_view)
+                                    .commit();
+
+
+
+                        }else{
+                            Log.e("MainActivity", "Error in creating fragment");
+                        }
+
+                    }
+                });
 
             }
         }, new Response.ErrorListener() {
@@ -83,13 +123,41 @@ public class CursosActivity extends ActionBarActivity {
 
 
         queue.add(request);
+
+
+
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cursos, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search
+        }
     }
 
     @Override

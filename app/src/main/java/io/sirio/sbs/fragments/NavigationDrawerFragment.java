@@ -19,10 +19,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.toolbox.BasicNetwork;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.sirio.sbs.BeneficiosActivity;
 import io.sirio.sbs.CursosActivity;
+import io.sirio.sbs.MiPerfilActivity;
+import io.sirio.sbs.MisCursosActivity;
 import io.sirio.sbs.R;
 import io.sirio.sbs.adapters.NavDrawerRecycler;
 import io.sirio.sbs.models.Information;
@@ -78,7 +83,7 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
         List<Information> data = new ArrayList<>();
 
         int[] icons = {R.mipmap.ic_account_balance_grey, R.mipmap.ic_explore_grey,  R.mipmap.ic_redeem_grey, R.mipmap.ic_account_circle_grey,};
-        String[] titles = {"Mis Curso", "Curso",  "Beneficios", "Perfil",};
+        String[] titles = {"Mis Cursos", "Cursos",  "Beneficios", "Perfil",};
         for (int i = 0; i < titles.length; i++){
             Information currentaData = new Information();
 
@@ -156,7 +161,18 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
     @Override
     public void itemClicked(View view, int position) {
 
+        switch (position){
+            case 0 :  startActivity(new Intent(getActivity(),MisCursosActivity.class));
+                break;
+            case 1 :  startActivity(new Intent(getActivity(),CursosActivity.class));
+                break;
+            case 2 :  startActivity(new Intent(getActivity(),BeneficiosActivity.class));
+                break;
+            case 3 :  startActivity(new Intent(getActivity(),MiPerfilActivity.class));
+                break;
+        }
 
-       startActivity(new Intent(getActivity(),CursosActivity.class));
+
+
     }
 }

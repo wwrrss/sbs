@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.sirio.sbs" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +28,35 @@
         <activity
             android:name=".CursosActivity"
             android:label="@string/title_activity_cursos" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".fragments.MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".MisCursosActivity"
+            android:label="@string/title_activity_mis_cursos" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".fragments.MainActivity" />
+        </activity>
+        <activity
+            android:name=".BeneficiosActivity"
+            android:label="@string/title_activity_beneficios" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".fragments.MainActivity" />
+        </activity>
+        <activity
+            android:name=".MiPerfilActivity"
+            android:label="@string/title_activity_mi_perfil" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".fragments.MainActivity" />
