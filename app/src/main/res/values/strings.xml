@@ -17,4 +17,11 @@
     <string name="title_activity_mi_perfil">Mi Perfil</string>
     <string name="menu_search">buscar otros cursos</string>
     <string name="search_hint">buscar otros cursos</string>
+
+    <string-array name="titles_array">
+        <item>Mis Cursos</item>
+        <item>Cursos</item>
+        <item>Beneficios</item>
+        <item>Perfil</item>
+    </string-array>
 </resources>

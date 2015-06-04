@@ -1,6 +1,5 @@
 package io.sirio.sbs.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,28 +16,37 @@ import io.sirio.sbs.models.Information;
 
 public class NavDrawerRecycler extends RecyclerView.Adapter<NavDrawerRecycler.MyViewHolder> {
 
-    private LayoutInflater inflater;
-    private Context context;
     List<Information> data = Collections.emptyList();
+    private OnItemClickListener mListener;
 
-    private ClickListener clickListener;
 
-    public NavDrawerRecycler(Context context, List<Information> data){
-        inflater = LayoutInflater.from(context);
+    public interface OnItemClickListener {
+        public void onClick(View view, int position);
+    }
+
+    public NavDrawerRecycler( List<Information> data, OnItemClickListener listener ){
         this.data = data;
-        this.context = context;
+        this.mListener = listener;
     }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view =inflater.inflate(R.layout.custom_row, parent, false);
+        LayoutInflater vi = LayoutInflater.from(parent.getContext());
+        View view =vi.inflate(R.layout.custom_row, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
         Information currentData = data.get(position);
         holder.title.setText(currentData.title);
         holder.icon.setImageResource(currentData.iconId);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onClick(v, position);
+            }
+        });
+
 
     }
 
@@ -47,34 +55,18 @@ public class NavDrawerRecycler extends RecyclerView.Adapter<NavDrawerRecycler.My
         return data.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView title;
-        ImageView icon;
+    class MyViewHolder extends RecyclerView.ViewHolder{
+        final TextView title;
+        final ImageView icon;
 
         public MyViewHolder(final View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
             title= (TextView) itemView.findViewById(R.id.text_view);
             icon = (ImageView) itemView.findViewById(R.id.image_view);
 
         }
 
-        @Override
-        public void onClick(View v) {
-
-            if(clickListener!= null){
-                clickListener.itemClicked(v, getPosition());
-
-            }
-        }
     }
 
-    public interface ClickListener{
-         void itemClicked(View view, int position);
 
-    }
-
-    public void setClickListener(ClickListener clickListener){
-        this.clickListener = clickListener;
-    }
 }

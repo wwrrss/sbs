@@ -2,31 +2,23 @@ package io.sirio.sbs.fragments;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-
-import com.android.volley.toolbox.BasicNetwork;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.sirio.sbs.BeneficiosActivity;
-import io.sirio.sbs.CursosActivity;
-import io.sirio.sbs.MiPerfilActivity;
-import io.sirio.sbs.MisCursosActivity;
 import io.sirio.sbs.R;
 import io.sirio.sbs.adapters.NavDrawerRecycler;
 import io.sirio.sbs.models.Information;
@@ -35,20 +27,25 @@ import io.sirio.sbs.models.Information;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NavigationDrawerFragment extends Fragment implements NavDrawerRecycler.ClickListener{
+public class NavigationDrawerFragment extends ActionBarActivity implements NavDrawerRecycler.OnItemClickListener{
 
     public  static  final String PREF_FILE_NAME = "testpref";
 
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
     private boolean mUserLearnedDrawer;
     private boolean mFromSavedInstanceState;
+    private Toolbar toolbar;
 
     private ActionBarDrawerToggle mDrawerToogle;
 
     private DrawerLayout mDrawerLayout;
     private View containerView;
-    private RecyclerView recyclerView;
-    private NavDrawerRecycler adapter;
+    private RecyclerView mDrawerList;
+
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private String[] mOptionsTitles;
+
 
     public NavigationDrawerFragment() {
         // Required empty public constructor
@@ -57,32 +54,70 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUserLearnedDrawer = Boolean.parseBoolean(readToPreference(getActivity(), KEY_USER_LEARNED_DRAWER, "false"));
 
-        if(savedInstanceState!= null){
-            mFromSavedInstanceState = true;
+        setContentView(R.layout.fragment_navigation_drawer);
+
+        mTitle = mDrawerTitle = getTitle();
+        mOptionsTitles = getResources().getStringArray(R.array.titles_array);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (RecyclerView) findViewById(R.id.drawerList);
+
+       // mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        mDrawerList.setHasFixedSize(true);
+        mDrawerList.setLayoutManager(new LinearLayoutManager(this));
+        mDrawerList.setAdapter(new NavDrawerRecycler(getData(), this));
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mDrawerToogle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar,  R.string.open_drawer, R.string.close_drawer
+        ) {
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                if(!mFromSavedInstanceState){
+                    mFromSavedInstanceState = true;
+                    saveToPreference(getApplicationContext(), KEY_USER_LEARNED_DRAWER, mFromSavedInstanceState+"");
+                }
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                if(slideOffset < 0.6){
+                    toolbar.setAlpha(1-slideOffset);
+                }
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToogle);
+
+
+        if (savedInstanceState == null) {
+            selectItem(0);
         }
 
+
+     /*   mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerToogle.syncState();
+            }
+        });*/
+
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
-        adapter = new NavDrawerRecycler(getActivity(), getData());
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        return layout;
-    }
 
     public static List<Information> getData(){
         List<Information> data = new ArrayList<>();
 
         int[] icons = {R.mipmap.ic_account_balance_grey, R.mipmap.ic_explore_grey,  R.mipmap.ic_redeem_grey, R.mipmap.ic_account_circle_grey,};
-        String[] titles = {"Mis Cursos", "Cursos",  "Beneficios", "Perfil",};
+        String[] titles = {,};
         for (int i = 0; i < titles.length; i++){
             Information currentaData = new Information();
 
@@ -92,59 +127,6 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
             data.add(currentaData);
         }
         return data;
-    }
-
-    public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar){
-        containerView = getActivity().findViewById(fragmentId);
-        mDrawerLayout = drawerLayout;
-        mDrawerToogle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer){
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-
-                if (!isAdded()) {
-                    return;
-                }
-
-                if(!mFromSavedInstanceState){
-                    mFromSavedInstanceState = true;
-                    saveToPreference(getActivity(), KEY_USER_LEARNED_DRAWER, mFromSavedInstanceState+"");
-                }
-
-                getActivity().invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                if (!isAdded()) {
-                    return;
-                }
-                getActivity().invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                if(slideOffset < 0.6){
-                    toolbar.setAlpha(1-slideOffset);
-                }
-            }
-        };
-
-
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState){
-            mDrawerLayout.openDrawer(containerView);
-        }
-
-        mDrawerLayout.setDrawerListener(mDrawerToogle);
-
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToogle.syncState();
-            }
-        });
     }
 
 
@@ -166,18 +148,54 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
 
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void onClick(View view, int position) {
+
+
         switch (position){
-            case 0 :  startActivity(new Intent(getActivity(),MisCursosActivity.class));
+            case 0 :   selectItem(position);
                 break;
-            case 1 : Fragment fragment = new CursosFragment();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+            case 1 :  selectItem(position);
                 break;
-            case 2 :  startActivity(new Intent(getActivity(),BeneficiosActivity.class));
+            case 2 :   selectItem(position);
                 break;
-            case 3 :  startActivity(new Intent(getActivity(),MiPerfilActivity.class));
+            case 3 :   selectItem(position);
                 break;
         }
     }
 
+
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+        Fragment fragment = new CursosFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.container, fragment);
+        ft.commit();
+
+        // update selected item title, then close the drawer
+        setTitle(mOptionsTitles[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToogle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToogle.onConfigurationChanged(newConfig);
+    }
 }
