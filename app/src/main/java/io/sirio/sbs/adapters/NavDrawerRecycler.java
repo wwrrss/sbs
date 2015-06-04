@@ -1,22 +1,17 @@
 package io.sirio.sbs.adapters;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
 
 import io.sirio.sbs.R;
-import io.sirio.sbs.fragments.FragmentCursos;
 import io.sirio.sbs.models.Information;
 
 
@@ -67,7 +62,6 @@ public class NavDrawerRecycler extends RecyclerView.Adapter<NavDrawerRecycler.My
         @Override
         public void onClick(View v) {
 
-            Log.e("ERROR","NADA");
             if(clickListener!= null){
                 clickListener.itemClicked(v, getPosition());
 

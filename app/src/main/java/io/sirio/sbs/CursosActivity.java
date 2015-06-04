@@ -60,8 +60,7 @@ public class CursosActivity extends ActionBarActivity {
 
 
 
-        String URL= "https://script.googleusercontent.com/macros/echo?user_content_key=iIGW6tDpoMMsAsRLO82xJG8WIVhY4VtM5gJgiA3QO6zStQOhGr8N4EbfKEDH59r0gTfTtum2cUrxmSuOwabPti5EzVkbj1G7m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnA21ty4-NFgqoKc_ZhjFAX1ah6w8hoKrwU71K7lgPAwVmCE74_lR62bbtcQNKfQPMhdIug5zkO6q&lib=MuVcg4D5zOmfGpbFbxsUiP8v3COA06hUq";
-
+        String URL= "http://sbsconsulting.com.ec/?json=get_tag_posts&tag_slug=curso";
         id = R.layout.row_cursos;
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_cursos);
@@ -76,42 +75,16 @@ public class CursosActivity extends ActionBarActivity {
         JsonArrayRequest request = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-               // Log.e("miREspuesta", response.toString());
+                Log.e("miREspuesta", response.toString());
                 dataset = new ArrayList<>();
                 //parser(response);En vez de hacer el parse utilizar GSON que ya te hace eso automaticamente
                 Gson gson = new Gson();
                 Type listType = new TypeToken<ArrayList<Curso>>(){}.getType();
                 dataset = gson.fromJson(response.toString(),listType);
                 progressDialog.cancel();
-                cursosAdapter = new CursosAdapter(dataset, id);
                 recyclerView.setAdapter(cursosAdapter);
 
-                cursosAdapter.SetOnItemClickListener(new CursosAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
 
-                        Fragment curso_view = new CursosViewFragment();
-
-                        if (curso_view != null) {
-
-
-
-
-                            FragmentManager fragmentManager =
-                                    getSupportFragmentManager();
-
-                            fragmentManager.beginTransaction()
-                                    .add(R.id.container, curso_view)
-                                    .commit();
-
-
-
-                        }else{
-                            Log.e("MainActivity", "Error in creating fragment");
-                        }
-
-                    }
-                });
 
             }
         }, new Response.ErrorListener() {

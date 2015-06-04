@@ -1,70 +1,75 @@
 package io.sirio.sbs.adapters;
 
+
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import io.sirio.sbs.R;
+import io.sirio.sbs.fragments.CursosViewFragment;
 import io.sirio.sbs.models.Curso;
+import io.sirio.sbs.models.CursoPost;
 
-public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder>{
+public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolderCursos>{
 
-    ArrayList<Curso> cursos;
+    ArrayList<CursoPost> cursoPosts;
     int itemLayout;
+    private LayoutInflater layoutInflater;
+
     OnItemClickListener mItemClickListener;
 
-    public CursosAdapter(ArrayList<Curso> cursos, int itemLayout){
-        this.cursos = cursos;
-        this.itemLayout = itemLayout;
 
-    }
-    @Override
-    public CursosAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent,false);
-        return new ViewHolder(v);
+    public CursosAdapter(Context context){
+        layoutInflater = LayoutInflater.from(context);
     }
 
+    public void setCursoList(ArrayList<CursoPost> cursoList){
+        this.cursoPosts = cursoList;
+      //  notifyItemRangeChanged(0, cursoList.size());
+        notifyDataSetChanged();
+    }
     @Override
-    public void onBindViewHolder(CursosAdapter.ViewHolder holder, int position) {
-        Curso curso = cursos.get(position);
+    public ViewHolderCursos onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = layoutInflater.inflate(R.layout.row_cursos, parent, false);
+        ViewHolderCursos v = new ViewHolderCursos(view);
+        return v;
+    }
 
-        holder.nombreCurso.setText(curso.getNombre());
-        holder.fechaInicio.setText(curso.getFechaInicio());
-        holder.ciudad.setText(curso.getCiudad());
-        holder.valor.setText(curso.getValor());
-
+    @Override
+    public void onBindViewHolder(ViewHolderCursos holder, int position) {
+        CursoPost curso = cursoPosts.get(position);
+        Log.e("BIND",curso.getTitle());
+        holder.tituloCurso.setText(curso.getTitle());
 
 
     }
 
     @Override
     public int getItemCount() {
-        return cursos.size();
+        return (null != cursoPosts ? cursoPosts.size() : 0);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolderCursos extends RecyclerView.ViewHolder{
 
 
-        TextView nombreCurso;
-        TextView fechaInicio;
-        TextView ciudad;
-        TextView valor;
+        TextView tituloCurso;
 
-        public ViewHolder(View itemView) {
+
+        public ViewHolderCursos(View itemView) {
             super(itemView);
 
-            nombreCurso = (TextView) itemView.findViewById(R.id.nombre_curso);
-            fechaInicio = (TextView) itemView.findViewById(R.id.fecha_inicio);
-            ciudad = (TextView) itemView.findViewById(R.id.ciudad);
-            valor = (TextView) itemView.findViewById(R.id.valor);
+            tituloCurso = (TextView) itemView.findViewById(R.id.nombre_curso);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+
+           /* itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -75,21 +80,22 @@ public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder
                     }
 
                 }
-            });
-
+            });*/
 
         }
 
 
+
     }
 
-
     public interface OnItemClickListener {
-         void onItemClick(View view , int position);
+        public void onItemClick(View view , int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
+
+
 
 }

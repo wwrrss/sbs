@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.sirio.sbs.fragments.FragmentCursos">
+    tools:context="io.sirio.sbs.fragments.CursosFragment">
 
     <include
         android:id="@+id/app_bar"
@@ -10,7 +10,7 @@
 
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_cursos"
+        android:id="@+id/recycler_view_cursos_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"

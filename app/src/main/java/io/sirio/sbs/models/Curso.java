@@ -1,54 +1,37 @@
 package io.sirio.sbs.models;
 
+import java.util.ArrayList;
+
 /**
  * Created by Diego on 23/05/2015.
  */
 public class Curso {
 
-    private String nombreCurso;
-    private String fechaInicio;
-    private String ciudad;
-    private String nombre;
+    private int count;
+    private int pages;
+    private ArrayList<CursoPost> posts;
 
-    public String getNombre() {
-        return nombre;
+    public int getCount() {
+        return count;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setCount(int count) {
+        this.count = count;
     }
 
-    public String getNombreCurso() {
-        return nombreCurso;
+    public int getPages() {
+        return pages;
     }
 
-    public void setNombreCurso(String nombreCurso) {
-        this.nombreCurso = nombreCurso;
+    public void setPages(int pages) {
+        this.pages = pages;
     }
 
-    public String getFechaInicio() {
-        return fechaInicio;
+    public ArrayList<CursoPost> getPosts() {
+        return posts;
     }
 
-    public void setFechaInicio(String fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setPosts(ArrayList<CursoPost> posts) {
+        this.posts = posts;
     }
-
-    public String getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public String getValor() {
-        return valor;
-    }
-
-    public void setValor(String valor) {
-        this.valor = valor;
-    }
-
-    private String valor;
 }

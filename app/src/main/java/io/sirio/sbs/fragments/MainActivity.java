@@ -1,13 +1,18 @@
 package io.sirio.sbs.fragments;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import io.sirio.sbs.BeneficiosActivity;
+import io.sirio.sbs.MiPerfilActivity;
+import io.sirio.sbs.MisCursosActivity;
 import io.sirio.sbs.R;
 
 
@@ -27,6 +32,7 @@ public class MainActivity extends ActionBarActivity {
         NavigationDrawerFragment navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
 
         navigationDrawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
     }
 
     @Override
@@ -51,4 +57,6 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

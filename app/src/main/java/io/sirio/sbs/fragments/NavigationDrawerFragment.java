@@ -4,7 +4,6 @@ package io.sirio.sbs.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.FeatureGroupInfo;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -103,6 +102,11 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
+                if (!isAdded()) {
+                    return;
+                }
+
                 if(!mFromSavedInstanceState){
                     mFromSavedInstanceState = true;
                     saveToPreference(getActivity(), KEY_USER_LEARNED_DRAWER, mFromSavedInstanceState+"");
@@ -114,6 +118,9 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                if (!isAdded()) {
+                    return;
+                }
                 getActivity().invalidateOptionsMenu();
             }
 
@@ -160,19 +167,17 @@ public class NavigationDrawerFragment extends Fragment implements NavDrawerRecyc
 
     @Override
     public void itemClicked(View view, int position) {
-
         switch (position){
             case 0 :  startActivity(new Intent(getActivity(),MisCursosActivity.class));
                 break;
-            case 1 :  startActivity(new Intent(getActivity(),CursosActivity.class));
+            case 1 : Fragment fragment = new CursosFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
                 break;
             case 2 :  startActivity(new Intent(getActivity(),BeneficiosActivity.class));
                 break;
             case 3 :  startActivity(new Intent(getActivity(),MiPerfilActivity.class));
                 break;
         }
-
-
-
     }
+
 }
