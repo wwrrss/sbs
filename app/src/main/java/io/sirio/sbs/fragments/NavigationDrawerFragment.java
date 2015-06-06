@@ -1,50 +1,63 @@
 package io.sirio.sbs.fragments;
 
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.sirio.sbs.NavigationDrawerCallbacks;
 import io.sirio.sbs.R;
 import io.sirio.sbs.adapters.NavDrawerRecycler;
-import io.sirio.sbs.models.Information;
-
+import io.sirio.sbs.models.NavigationItem;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NavigationDrawerFragment extends ActionBarActivity implements NavDrawerRecycler.OnItemClickListener{
+public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks{
 
-    public  static  final String PREF_FILE_NAME = "testpref";
+    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
-    private boolean mUserLearnedDrawer;
-    private boolean mFromSavedInstanceState;
-    private Toolbar toolbar;
-
-    private ActionBarDrawerToggle mDrawerToogle;
-
+    private NavigationDrawerCallbacks mCallbacks;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private View containerView;
     private RecyclerView mDrawerList;
-
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private String[] mOptionsTitles;
+    private View mFragmentContainerView;
+    private int mCurrentSelectedPosition = 0;
+    private boolean mFromSavedInstanceState;
+    private boolean mUserLearnedDrawer;
 
 
     public NavigationDrawerFragment() {
@@ -54,148 +67,261 @@ public class NavigationDrawerFragment extends ActionBarActivity implements NavDr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Read in the flag indicating whether or not the user has demonstrated awareness of the
+        // drawer. See PREF_USER_LEARNED_DRAWER for details.
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
-        setContentView(R.layout.fragment_navigation_drawer);
-
-        mTitle = mDrawerTitle = getTitle();
-        mOptionsTitles = getResources().getStringArray(R.array.titles_array);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (RecyclerView) findViewById(R.id.drawerList);
-
-       // mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        mDrawerList.setHasFixedSize(true);
-        mDrawerList.setLayoutManager(new LinearLayoutManager(this));
-        mDrawerList.setAdapter(new NavDrawerRecycler(getData(), this));
-
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mDrawerToogle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar,  R.string.open_drawer, R.string.close_drawer
-        ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                if(!mFromSavedInstanceState){
-                    mFromSavedInstanceState = true;
-                    saveToPreference(getApplicationContext(), KEY_USER_LEARNED_DRAWER, mFromSavedInstanceState+"");
-                }
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                if(slideOffset < 0.6){
-                    toolbar.setAlpha(1-slideOffset);
-                }
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToogle);
-
-
-        if (savedInstanceState == null) {
-            selectItem(0);
+        if (savedInstanceState != null) {
+            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+            mFromSavedInstanceState = true;
         }
 
-
-     /*   mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToogle.syncState();
-            }
-        });*/
-
-    }
-
-
-    public static List<Information> getData(){
-        List<Information> data = new ArrayList<>();
-
-        int[] icons = {R.mipmap.ic_account_balance_grey, R.mipmap.ic_explore_grey,  R.mipmap.ic_redeem_grey, R.mipmap.ic_account_circle_grey,};
-        String[] titles = {,};
-        for (int i = 0; i < titles.length; i++){
-            Information currentaData = new Information();
-
-            currentaData.iconId = icons[i];
-            currentaData.title = titles[i];
-
-            data.add(currentaData);
-        }
-        return data;
-    }
-
-
-    public static void saveToPreference(Context context, String preferenceName, String preferenceValue){
-
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString(preferenceName, preferenceValue);
-        editor.apply();
-
-    }
-
-    public static String readToPreference(Context context, String preferenceName, String preferenceValue){
-
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(preferenceName, preferenceValue);
     }
 
 
     @Override
-    public void onClick(View view, int position) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        mDrawerList = (RecyclerView) view.findViewById(R.id.drawerList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mDrawerList.setLayoutManager(layoutManager);
+        mDrawerList.setHasFixedSize(true);
 
+        final List<NavigationItem> navigationItems = getMenu();
+        NavDrawerRecycler adapter = new NavDrawerRecycler(navigationItems);
+        adapter.setNavigationDrawerCallbacks(this);
+        mDrawerList.setAdapter(adapter);
+        selectItem(mCurrentSelectedPosition);
 
-        switch (position){
-            case 0 :   selectItem(position);
-                break;
-            case 1 :  selectItem(position);
-                break;
-            case 2 :   selectItem(position);
-                break;
-            case 3 :   selectItem(position);
-                break;
+        return view;
+    }
+
+    public boolean isDrawerOpen() {
+        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
+    }
+
+    public ActionBarDrawerToggle getActionBarDrawerToggle() {
+        return mActionBarDrawerToggle;
+    }
+
+    public DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
+
+    public List<NavigationItem> getMenu() {
+        List<NavigationItem> items = new ArrayList<NavigationItem>();
+        items.add(new NavigationItem("Mis Cursos", getResources().getDrawable(R.drawable.ic_mis_cursos)));
+        items.add(new NavigationItem("Cursos", getResources().getDrawable(R.drawable.ic_cursos)));
+        items.add(new NavigationItem("Beneficios", getResources().getDrawable(R.drawable.ic_beneficios)));
+        items.add(new NavigationItem("Perfil", getResources().getDrawable(R.drawable.ic_perfil)));
+        return items;
+    }
+
+    /**
+     * Users of this fragment must call this method to set up the navigation drawer interactions.
+     *
+     * @param fragmentId   The android:id of this fragment in its activity's layout.
+     * @param drawerLayout The DrawerLayout containing this fragment's UI.
+     * @param toolbar      The Toolbar of the activity.
+     */
+    public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar) {
+        mFragmentContainerView = getActivity().findViewById(fragmentId);
+        mDrawerLayout = drawerLayout;
+
+        mDrawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primaryColorDark));
+
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (!isAdded()) return;
+
+                getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                if (!isAdded()) return;
+                if (!mUserLearnedDrawer) {
+                    mUserLearnedDrawer = true;
+                    SharedPreferences sp = PreferenceManager
+                            .getDefaultSharedPreferences(getActivity());
+                    sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+                }
+                getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+            }
+        };
+
+        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
+        // per the navigation drawer design guidelines.
+        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
+            mDrawerLayout.openDrawer(mFragmentContainerView);
         }
+
+        // Defer code dependent on restoration of previous instance state.
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mActionBarDrawerToggle.syncState();
+            }
+        });
+
+        mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
     }
 
 
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-        Fragment fragment = new CursosFragment();
+        mCurrentSelectedPosition = position;
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+        if (mCallbacks != null) {
+            mCallbacks.onNavigationDrawerItemSelected(position);
+        }
+        ((NavDrawerRecycler) mDrawerList.getAdapter()).selectPosition(position);
+    }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.container, fragment);
-        ft.commit();
+    public void openDrawer() {
+        mDrawerLayout.openDrawer(mFragmentContainerView);
+    }
 
-        // update selected item title, then close the drawer
-        setTitle(mOptionsTitles[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawer(mFragmentContainerView);
     }
 
 
+
+
     @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getActionBar().setTitle(mTitle);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallbacks = (NavigationDrawerCallbacks) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        }
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToogle.syncState();
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
-        mDrawerToogle.onConfigurationChanged(newConfig);
+        // Forward the new configuration the drawer toggle component.
+        mActionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
+
+    public void setUserData(String user, String email, Bitmap avatar) {
+        ImageView avatarContainer = (ImageView) mFragmentContainerView.findViewById(R.id.imgAvatar);
+        ((TextView) mFragmentContainerView.findViewById(R.id.txtUserEmail)).setText(email);
+        ((TextView) mFragmentContainerView.findViewById(R.id.txtUsername)).setText(user);
+        avatarContainer.setImageDrawable(new RoundImage(avatar));
+    }
+
+    public View getGoogleDrawer() {
+        return mFragmentContainerView.findViewById(R.id.googleDrawer);
+    }
+
+    public static class RoundImage extends Drawable {
+        private final Bitmap mBitmap;
+        private final Paint mPaint;
+        private final RectF mRectF;
+        private final int mBitmapWidth;
+        private final int mBitmapHeight;
+
+        public RoundImage(Bitmap bitmap) {
+            mBitmap = bitmap;
+            mRectF = new RectF();
+            mPaint = new Paint();
+            mPaint.setAntiAlias(true);
+            mPaint.setDither(true);
+            final BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+            mPaint.setShader(shader);
+
+            mBitmapWidth = mBitmap.getWidth();
+            mBitmapHeight = mBitmap.getHeight();
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            canvas.drawOval(mRectF, mPaint);
+        }
+
+        @Override
+        protected void onBoundsChange(Rect bounds) {
+            super.onBoundsChange(bounds);
+            mRectF.set(bounds);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            if (mPaint.getAlpha() != alpha) {
+                mPaint.setAlpha(alpha);
+                invalidateSelf();
+            }
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter cf) {
+            mPaint.setColorFilter(cf);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+
+        @Override
+        public int getIntrinsicWidth() {
+            return mBitmapWidth;
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            return mBitmapHeight;
+        }
+
+        public void setAntiAlias(boolean aa) {
+            mPaint.setAntiAlias(aa);
+            invalidateSelf();
+        }
+
+        @Override
+        public void setFilterBitmap(boolean filter) {
+            mPaint.setFilterBitmap(filter);
+            invalidateSelf();
+        }
+
+        @Override
+        public void setDither(boolean dither) {
+            mPaint.setDither(dither);
+            invalidateSelf();
+        }
+
+        public Bitmap getBitmap() {
+            return mBitmap;
+        }
+
+    }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        selectItem(position);
+    }
+
+
 }

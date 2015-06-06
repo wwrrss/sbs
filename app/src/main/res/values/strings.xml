@@ -9,12 +9,8 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="open_drawer">Abrir</string>
-    <string name="close_drawer">Cerrar</string>
-    <string name="title_activity_cursos">Cursos</string>
-    <string name="title_activity_mis_cursos">Mis Cursos</string>
-    <string name="title_activity_beneficios">Beneficios</string>
-    <string name="title_activity_mi_perfil">Mi Perfil</string>
+    <string name="drawer_open">Abrir</string>
+    <string name="drawer_close">Cerrar</string>
     <string name="menu_search">buscar otros cursos</string>
     <string name="search_hint">buscar otros cursos</string>
 
@@ -24,4 +20,6 @@
         <item>Beneficios</item>
         <item>Perfil</item>
     </string-array>
+
+
 </resources>

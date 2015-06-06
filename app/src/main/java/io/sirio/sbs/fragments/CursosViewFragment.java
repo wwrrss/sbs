@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import io.sirio.sbs.R;
@@ -27,10 +29,16 @@ public class CursosViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_cursos_view, container, false);
-        String nombre_curso = getArguments().getString("nombre_curso_view");
 
-        tTituloCurso = (TextView) view.findViewById(R.id.titulo_curso_view);
-        tTituloCurso.setText(nombre_curso);
+
+        String content = getArguments().getString("contentCurso");
+
+        WebView mWebView = (WebView) view.findViewById(R.id.webView);
+        WebSettings settings = mWebView.getSettings();
+
+        settings.setDefaultTextEncodingName("utf-8");
+        String header = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> ";
+        mWebView.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
         return view;
 
 

@@ -13,11 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -25,7 +21,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -35,16 +30,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import io.sirio.sbs.R;
-import io.sirio.sbs.VolleyApplication;
 import io.sirio.sbs.adapters.CursosAdapter;
 import io.sirio.sbs.models.CursoPost;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CursosFragment extends Fragment {
+public class CursosFragment extends Fragment implements CursosAdapter.OnItemClickListener{
 
-    FragmentActivity mActivity;
+    public static final String TAG = "Cursos";
     private ArrayList<CursoPost> dataset = new ArrayList<>();
     RecyclerView recyclerView;
     CursosAdapter cursosAdapter;
@@ -57,71 +51,25 @@ public class CursosFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private void sendJsonRequest() {
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Espere por favor", "estamos atendiendo su solicitud");
-
-        JsonArrayRequest request = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                Log.e("miREspuesta", response.toString());
-              /*  Gson gson = new Gson();
-                Type listType = new TypeToken<ArrayList<Curso>>() {
-                }.getType();
-                dataset = gson.fromJson(response.toString(), listType);*/
-             //   parseJSON(response.toString());
-                cursosAdapter.setCursoList(dataset);
-                progressDialog.cancel();
-                recyclerView.setAdapter(cursosAdapter);
-
-/*                    cursosAdapter.SetOnItemClickListener(new CursosAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            Bundle bundle = new Bundle();
-//                          TextView fechaText = (TextView) view.findViewById(R.id.fecha_celula);
-//                          bundle.putString("fecha",fechaText.getText().toString());
-                            Fragment cursosFragment = new CursosFragment();
-                            // cursosFragment.setArguments(bundle);
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, cursosFragment).commit();
-
-                        }
-                    } );*/
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.cancel();
-                Log.e("error", error.getMessage());
-                Toast.makeText(getActivity(), "Unable to fetch data: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-
-        VolleyApplication.getInstance().getRequestQueue().add(request);
-
-    }
 
 
 
-    public void parser(JSONArray response) {
-
-
-        for (int i = 0; i < response.length(); i++) {
-
-            CursoPost curso = new CursoPost();
-            try {
-                Log.e("POST", response.toString());
-                JSONObject jsonObject = (JSONObject) response.get(i);
-                Log.e("POST", jsonObject.toString());
-                curso.setTitle(jsonObject.getString("title"));
-
-                dataset.add(curso);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    @Override
+    public void onItemClick(View view, int position) {
+        Log.e("click",position+"");
+       String contentPage =  dataset.get(position).getContent();
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString("contentCurso",contentPage);
+            Fragment fragment = new CursosViewFragment();
+            fragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
+
+
+
     }
 
     private class FetchDataTask extends AsyncTask<String, Void, String> {
@@ -189,12 +137,15 @@ public class CursosFragment extends Fragment {
                 int postCount = Integer.parseInt(jsonResponse.getString("count"));
 
                 int jsonArrLength = jsonMainNode.length();
-                CursoPost curso = new CursoPost();
-                for (int i = 0; i < jsonArrLength; i++) {
 
+                for (int i = 0; i < jsonArrLength; i++) {
+                    CursoPost curso = new CursoPost();
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                     curso.setTitle(jsonChildNode.getString("title"));
-                    Log.e("POST", curso.getTitle());
+                    curso.setId(jsonChildNode.getInt("id"));
+                    curso.setContent(jsonChildNode.getString("content"));
+                    curso.setExcerpt(jsonChildNode.getString("excerpt"));
+                    curso.setUrl(jsonChildNode.getString("url"));
                     dataset.add(curso);
                 }
 
@@ -214,7 +165,9 @@ public class CursosFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
         cursosAdapter = new CursosAdapter(getActivity());
+        cursosAdapter.SetOnItemClickListener(this);
         recyclerView.setAdapter(cursosAdapter);
         progressDialog = ProgressDialog.show(getActivity(), "Espere por favor", "estamos atendiendo su solicitud");
 

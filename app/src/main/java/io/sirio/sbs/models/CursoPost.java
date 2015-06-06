@@ -9,6 +9,24 @@ public class CursoPost {
     private String status;
     private String title;
     private String date;
+    private String content;
+    private String excerpt;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getExcerpt() {
+        return excerpt;
+    }
+
+    public void setExcerpt(String excerpt) {
+        this.excerpt = excerpt;
+    }
 
     public String getSlug() {
         return slug;

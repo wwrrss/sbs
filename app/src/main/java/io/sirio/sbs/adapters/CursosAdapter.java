@@ -21,7 +21,6 @@ import io.sirio.sbs.models.CursoPost;
 public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolderCursos>{
 
     ArrayList<CursoPost> cursoPosts;
-    int itemLayout;
     private LayoutInflater layoutInflater;
 
     OnItemClickListener mItemClickListener;
@@ -33,7 +32,6 @@ public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder
 
     public void setCursoList(ArrayList<CursoPost> cursoList){
         this.cursoPosts = cursoList;
-      //  notifyItemRangeChanged(0, cursoList.size());
         notifyDataSetChanged();
     }
     @Override
@@ -46,9 +44,7 @@ public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolderCursos holder, int position) {
         CursoPost curso = cursoPosts.get(position);
-        Log.e("BIND",curso.getTitle());
         holder.tituloCurso.setText(curso.getTitle());
-
 
     }
 
@@ -58,34 +54,22 @@ public class CursosAdapter extends RecyclerView.Adapter<CursosAdapter.ViewHolder
     }
 
     public class ViewHolderCursos extends RecyclerView.ViewHolder{
-
-
         TextView tituloCurso;
-
 
         public ViewHolderCursos(View itemView) {
             super(itemView);
 
             tituloCurso = (TextView) itemView.findViewById(R.id.nombre_curso);
-
-
-           /* itemView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
-                    if (mItemClickListener != null) {
+            if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(v, getPosition());
-
                     }
 
                 }
-            });*/
-
+            });
         }
-
-
-
     }
 
     public interface OnItemClickListener {
